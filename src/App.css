@@ -1,0 +1,309 @@
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+}
+
+.header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 1rem;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
+  color: white;
+  border-radius: 12px;
+}
+
+.btn-back {
+  position: absolute;
+  left: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.header p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-top: 0.25rem;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.section {
+  background: white;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.section h2 {
+  font-size: 1.15rem;
+  color: #1a3a52;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e8e8e8;
+}
+
+.section.quote-compact .form-grid {
+  gap: 0.5rem;
+}
+
+.section.quote-compact .field label {
+  font-size: 0.8rem;
+}
+
+.section.quote-compact .field input,
+.section.quote-compact .field select {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.9rem;
+}
+
+.tax-field {
+  margin: 0.5rem 0;
+}
+
+.custom-input-margin {
+  margin-top: 0.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.field.full-width {
+  grid-column: 1 / -1;
+}
+
+.field label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.field input,
+.field select,
+.field textarea {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+.field textarea {
+  resize: vertical;
+  min-height: 50px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: #2d5a7b;
+  box-shadow: 0 0 0 2px rgba(45, 90, 123, 0.2);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.referral-input {
+  margin-top: 0.5rem;
+  max-width: 300px;
+}
+
+.project-item {
+  background: #f9fafb;
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.6rem;
+  border: 1px solid #eee;
+}
+
+.project-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.project-item-header span {
+  font-weight: 600;
+  color: #1a3a52;
+}
+
+.btn-remove {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-remove:hover:not(:disabled) {
+  background: #c82333;
+}
+
+.btn-remove:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-add {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  background: #2d5a7b;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+.btn-add:hover {
+  background: #1a3a52;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  font-size: 1rem;
+}
+
+.summary-row.total {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1a3a52;
+  margin-top: 0.35rem;
+  padding-top: 0.6rem;
+  border-top: 2px solid #e8e8e8;
+}
+
+.optional-lighting {
+  margin: 0.5rem 0;
+  padding: 0.6rem 0.9rem;
+  background: #fef9e7;
+  border: 1px solid #f39c12;
+  border-radius: 8px;
+}
+
+.optional-lighting .lighting-options {
+  margin-top: 0.5rem;
+  padding-left: 1rem;
+}
+
+.optional-lighting select {
+  margin-bottom: 0.75rem;
+  min-width: 280px;
+}
+
+.lighting-price {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #27ae60;
+}
+
+.summary-row.total-with-lights {
+  color: #27ae60;
+}
+
+.discount-field {
+  margin: 0.5rem 0;
+  max-width: 200px;
+}
+
+.btn-download {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #1a3a52 0%, #2d5a7b 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(26, 58, 82, 0.3);
+}
+
+.btn-download:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(26, 58, 82, 0.4);
+}
+
+.btn-download-primary {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+.btn-download-primary:hover {
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+}
+
+.download-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.btn-print-fallback {
+  padding: 0.6rem 1rem;
+  font-size: 0.9rem;
+  background: #6c757d;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-print-fallback:hover {
+  background: #5a6268;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field.full-width {
+    grid-column: 1;
+  }
+}
