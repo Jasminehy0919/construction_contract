@@ -3,8 +3,16 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+# Speed up npm: longer timeout, retries, show progress
+ENV NPM_CONFIG_FETCH_TIMEOUT=120000
+ENV NPM_CONFIG_FETCH_RETRIES=5
+ENV NPM_CONFIG_LOGLEVEL=info
+
+# Optional: use mirror if npmjs.org is slow (uncomment if needed, e.g. in China)
+# ENV NPM_CONFIG_REGISTRY=https://registry.npmmirror.com
+
 COPY package.json ./
-RUN npm install
+RUN npm install --prefer-offline --no-audit
 
 COPY . .
 RUN npm run build

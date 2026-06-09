@@ -19,7 +19,7 @@ A web app to generate professional construction contracts in English. Fill in cl
 1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for Mac
 2. Open Terminal, go to this folder:
    ```bash
-   cd /path/to/zero_construction   # 改为你实际的项目路径
+   cd /Users/jasminehou/Desktop/zero_construction
    ```
 3. Run:
    ```bash
