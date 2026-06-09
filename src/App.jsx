@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import html2pdf from 'html2pdf.js'
 import html2canvas from 'html2canvas'
 import { buildContractHTML, buildQuoteHTML } from './ContractTemplate'
 import { LandingPage } from './LandingPage'
+import { saveQuote, getQuote, listQuotes, formatQuoteLabel } from './quoteStorage'
 import './App.css'
 
 const WARRANTY_OPTIONS = [
@@ -118,8 +119,119 @@ function App() {
   const [includeTax, setIncludeTax] = useState(false)
   const [projectItems, setProjectItems] = useState([defaultProjectItem(false)])
   const [isGenerating, setIsGenerating] = useState(false)
+  const [savedQuotes, setSavedQuotes] = useState([])
+  const [selectedQuoteNumber, setSelectedQuoteNumber] = useState('')
+  const [toast, setToast] = useState(null)
+  const [saveButtonLabel, setSaveButtonLabel] = useState('Save Quote')
 
   const isQuote = mode === 'quote'
+
+  const showToast = (text, type = 'success') => {
+    setToast({ text, type })
+    setTimeout(() => setToast(null), 4000)
+  }
+
+  useEffect(() => {
+    if (mode === 'contract') {
+      setSavedQuotes(listQuotes())
+    }
+  }, [mode])
+
+  const buildQuoteSnapshot = () => ({
+    projectNumber: projectNumber.trim(),
+    savedAt: new Date().toISOString(),
+    quoteDate: new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }),
+    clientName,
+    address,
+    phone,
+    email,
+    projectItems: projectItems.map(
+      ({ itemNameSelect, itemName, serviceType, dimensions, description, price }) => ({
+        itemNameSelect,
+        itemName,
+        serviceType,
+        dimensions,
+        description,
+        price,
+      })
+    ),
+    includeLighting,
+    lightingOption,
+    lightingCustomPrice,
+    lightingCustomDescription,
+    discount,
+    includeTax,
+  })
+
+  const persistCurrentQuote = (context = 'saved') => {
+    const snapshot = buildQuoteSnapshot()
+    if (!snapshot.projectNumber) {
+      showToast('Enter a quote number before saving', 'error')
+      return false
+    }
+    const ok = saveQuote(snapshot)
+    if (ok) {
+      setSavedQuotes(listQuotes())
+      const messages = {
+        saved: `Quote #${snapshot.projectNumber} saved to browser`,
+        download: `Quote #${snapshot.projectNumber} saved — load it in Contract anytime`,
+      }
+      showToast(messages[context] || messages.saved, 'success')
+    }
+    return ok
+  }
+
+  const handleLoadQuote = (quoteNumber) => {
+    setSelectedQuoteNumber(quoteNumber)
+    if (!quoteNumber) return
+
+    const quote = getQuote(quoteNumber)
+    if (!quote) return
+
+    setProjectNumber(quote.projectNumber)
+    setClientName(quote.clientName || '')
+    setAddress(quote.address || '')
+    setPhone(quote.phone || '')
+    setEmail(quote.email || '')
+    setIncludeLighting(!!quote.includeLighting)
+    setLightingOption(quote.lightingOption || '')
+    setLightingCustomPrice(quote.lightingCustomPrice || '')
+    setLightingCustomDescription(quote.lightingCustomDescription || '')
+    setDiscount(quote.discount || '')
+    setIncludeTax(!!quote.includeTax)
+    setIsReferral(false)
+    setReferralName('')
+
+    const items =
+      quote.projectItems?.length > 0
+        ? quote.projectItems
+        : [defaultProjectItem(false)]
+
+    setProjectItems(
+      items.map((item) => ({
+        id: crypto.randomUUID(),
+        itemNameSelect: item.itemNameSelect || '',
+        itemName: item.itemName || '',
+        serviceType: item.serviceType || '',
+        dimensions: item.dimensions || '',
+        description: item.description || '',
+        price: item.price || '',
+        warranty: '',
+      }))
+    )
+  }
+
+  const handleSaveQuoteClick = () => {
+    const ok = persistCurrentQuote('saved')
+    if (ok) {
+      setSaveButtonLabel('Saved!')
+      setTimeout(() => setSaveButtonLabel('Save Quote'), 2000)
+    }
+  }
 
   const addProjectItem = () => {
     setProjectItems([...projectItems, defaultProjectItem(isQuote)])
@@ -192,6 +304,7 @@ function App() {
   })
 
   const openPrintView = () => {
+    if (isQuote) persistCurrentQuote('download')
     const buildFn = isQuote ? buildQuoteHTML : buildContractHTML
     const data = isQuote ? buildData() : { ...buildData(), WARRANTY_OPTIONS, WARRANTY_TEXT, CONTRACT_TERMS }
     const html = buildFn(data)
@@ -238,6 +351,7 @@ function App() {
       link.download = isQuote ? 'Zero_Construction_Quote.png' : 'Zero_Construction_Contract.png'
       link.href = canvas.toDataURL('image/png')
       link.click()
+      if (isQuote) persistCurrentQuote('download')
     } finally {
       document.body.removeChild(container)
       document.body.removeChild(wrapper)
@@ -278,6 +392,7 @@ function App() {
         })
         .from(contentEl)
         .save()
+      if (isQuote) persistCurrentQuote('download')
     } finally {
       document.body.removeChild(container)
       document.body.removeChild(wrapper)
@@ -300,6 +415,36 @@ function App() {
       </header>
 
       <main className="main">
+        {!isQuote && (
+          <section className="section load-quote-section">
+            <h2>Load from Saved Quote</h2>
+            <div className="field full-width">
+              <label>Select quote number</label>
+              <select
+                value={selectedQuoteNumber}
+                onChange={(e) => handleLoadQuote(e.target.value)}
+              >
+                <option value="">— Select a saved quote —</option>
+                {savedQuotes.map((quote) => (
+                  <option key={quote.projectNumber} value={quote.projectNumber}>
+                    {formatQuoteLabel(quote)}
+                  </option>
+                ))}
+              </select>
+              {savedQuotes.length === 0 && (
+                <p className="load-quote-hint">
+                  No saved quotes yet. Create and download a quote first — it will be saved automatically.
+                </p>
+              )}
+              {selectedQuoteNumber && (
+                <p className="load-quote-hint">
+                  Loaded quote #{selectedQuoteNumber}. Project # matches quote #. You can edit and add warranty below.
+                </p>
+              )}
+            </div>
+          </section>
+        )}
+
         <section className={`section ${isQuote ? 'quote-compact' : ''}`}>
           <h2>Client Information</h2>
           <div className="form-grid">
@@ -589,24 +734,22 @@ function App() {
             />
           </div>
 
-          {isQuote && (
-            <div className="field tax-field">
-              <label className="checkbox-label">
-                <input
-                  type="checkbox"
-                  checked={includeTax}
-                  onChange={(e) => setIncludeTax(e.target.checked)}
-                />
-                Include 13% HST
-              </label>
-              {includeTax && (
-                <div className="summary-row">
-                  <span>Tax (13%):</span>
-                  <span>${taxAmount.toFixed(2)}</span>
-                </div>
-              )}
-            </div>
-          )}
+          <div className="field tax-field">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={includeTax}
+                onChange={(e) => setIncludeTax(e.target.checked)}
+              />
+              Include 13% HST
+            </label>
+            {includeTax && (
+              <div className="summary-row">
+                <span>Tax (13%):</span>
+                <span>${taxAmount.toFixed(2)}</span>
+              </div>
+            )}
+          </div>
 
           <div className="summary-row total">
             <span>Total{includeLighting ? ' (with lighting)' : ''}:</span>
@@ -627,6 +770,15 @@ function App() {
         </section>
 
         <div className="download-buttons">
+          {isQuote && (
+            <button
+              type="button"
+              onClick={handleSaveQuoteClick}
+              className={`btn-save-quote${saveButtonLabel === 'Saved!' ? ' btn-save-quote-done' : ''}`}
+            >
+              {saveButtonLabel}
+            </button>
+          )}
           <button
             type="button"
             onClick={generateImage}
@@ -652,6 +804,13 @@ function App() {
           </button>
         </div>
       </main>
+
+      {toast && (
+        <div className={`save-toast save-toast-${toast.type}`} role="status">
+          {toast.type === 'success' ? '✓ ' : '! '}
+          {toast.text}
+        </div>
+      )}
     </div>
   )
 }

@@ -141,6 +141,9 @@ export function buildContractHTML(data) {
     discountAmount,
     totalWithoutLights,
     totalWithLights,
+    totalBeforeTax,
+    includeTax,
+    taxAmount,
     total,
     WARRANTY_OPTIONS,
     WARRANTY_TEXT,
@@ -248,8 +251,10 @@ export function buildContractHTML(data) {
         <tr><td>Subtotal:</td><td>$${(subtotal || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>
         ${includeLighting ? `<tr><td>Subtotal with lighting:</td><td>$${(subtotalWithLighting || subtotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
         <tr><td>Discount:</td><td>-$${(discountAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>
-        <tr class="total"><td>Total without lighting:</td><td>$${(totalWithoutLights ?? total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>
-        ${includeLighting ? `<tr class="total"><td>Total with lighting:</td><td>$${(totalWithLights ?? total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
+        <tr class="total"><td>Total without lighting:</td><td>$${(totalWithoutLights ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>
+        ${includeLighting ? `<tr class="total"><td>Total with lighting:</td><td>$${(totalWithLights ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
+        ${includeTax ? `<tr><td>Tax (13% HST):</td><td>$${(taxAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
+        ${includeTax ? `<tr class="total"><td>Total (incl. tax):</td><td>$${(total ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td></tr>` : ''}
       </table>
     </div>
 
